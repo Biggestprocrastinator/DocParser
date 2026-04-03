@@ -14,6 +14,22 @@
   <!-- <img src="images/demo.png" alt="Demo Screenshot" width="80%"> -->
 </p>
 
+## What is DocParser
+
+DocParser aims to provide a robust, unified pipeline that streamlines complex Document Image Analysis (DIA) and Entity Classification tasks. Built for the modern enterprise gap, it seamlessly blends traditional OCR with multimodal vision. Here are some key capabilities:
+
+**DocParser provides a highly accurate hybrid extraction pipeline as well as a set of unified APIs for integrating it.** For example:
+* Perform deep-learning assisted document analysis (Multimodal Vision) in a single API call
+* Intelligently clean and normalize extracted text using dynamic OpenCV preprocessing
+
+**DocParser comes with optimized data structures and async workers tailored for production-level document analysis.** For example:
+* Outputting strictly typed, flat JSON schemas mapping exact entities (Names, Dates, Organizations, Amounts)
+* Selecting and verifying handwritten snippets directly from raw bounding box approximations
+* Loading document data seamlessly across `png`, `jpg`, `pdf`, and `docx` formats
+
+**DocParser is built as an extensible architecture** that enables rapid integration into larger, asynchronous corporate systems using Celery and Redis job queuing.
+
+
 ## Architecture: The Augmented Hybrid Pipeline
 Unlike standard OCR solutions, this system implements an Augmented Hybrid Pipeline designed to solve the "Handwriting Gap" and "Structural Complexity" in modern documents.
 

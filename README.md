@@ -1,6 +1,19 @@
 # AI-Powered Document Analysis & Extraction
 **Track 2 Submission | HCL GUVI Intern Hiring Hackathon 2026**
 
+<!-- Badges -->
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi)
+![Gemini 3 Flash](https://img.shields.io/badge/AI-Gemini_3_Flash-orange?style=flat-square)
+![OpenCV](https://img.shields.io/badge/OpenCV-red?style=flat-square)
+![Tesseract](https://img.shields.io/badge/OCR-Tesseract-success?style=flat-square)
+![Redis](https://img.shields.io/badge/Broker-Redis-dc382d?style=flat-square&logo=redis)
+
+<p align="center">
+  <!-- Provide a system architecture diagram or screenshot in the images folder and uncomment below -->
+  <!-- <img src="images/demo.png" alt="Demo Screenshot" width="80%"> -->
+</p>
+
 ## Architecture: The Augmented Hybrid Pipeline
 Unlike standard OCR solutions, this system implements an Augmented Hybrid Pipeline designed to solve the "Handwriting Gap" and "Structural Complexity" in modern documents.
 
@@ -22,8 +35,9 @@ Unlike standard OCR solutions, this system implements an Augmented Hybrid Pipeli
 * **Document Handling**: `pdf2image`, `python-docx`, Poppler
 
 ## AI Tool Disclosure
-* **Google Gemini 3 Flash**: Primary engine for multimodal document reasoning and entity extraction.
-* **Gemini AI**: Assisted in system architecture design, debugging local environment conflicts (Tesseract/Poppler), and drafting technical documentation.
+> [!NOTE]
+> * **Google Gemini 3 Flash**: Primary engine for multimodal document reasoning and entity extraction.
+> * **Gemini AI**: Assisted in system architecture design, debugging local environment conflicts (Tesseract/Poppler), and drafting technical documentation.
 
 ## Setup & Installation
 
@@ -107,8 +121,10 @@ uvicorn main:app --reload
 ```
 
 ## Known Limitations
-* **Rate Limits**: Bound by Gemini Free Tier (15 requests per minute).
-* **Encrypted Files**: Cannot process password-protected PDFs.
+> [!CAUTION]
+> **Rate Limits:** Bound by Gemini Free Tier (15 requests per minute).
+> 
+> **Encrypted Files:** Cannot process password-protected PDFs.
 
 ## Author
 **Niraj Wadkar**  

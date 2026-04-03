@@ -6,7 +6,7 @@ import json
 # Configuration
 API_URL = "http://127.0.0.1:8000/api/document-analyze"
 API_KEY = "your_api_key_here"
-SAMPLES_DIR = "E:/College programs/DocRetAntiG/test_samples"
+SAMPLES_DIR = "./test_samples"
 
 def test_files():
     if not os.path.exists(SAMPLES_DIR):

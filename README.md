@@ -1,5 +1,5 @@
 # AI-Powered Document Analysis & Extraction
-**Track 2 Submission | HCL GUVI Intern Hiring Hackathon 2026**
+
 
 <!-- Badges -->
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)

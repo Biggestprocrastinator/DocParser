@@ -25,9 +25,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all application source code from src/ to /app/
 COPY src /app/
 
+# Make the start script executable
+RUN chmod +x /app/start.sh
+
 # Expose the standard FastAPI port
 EXPOSE 8000
 
-# The default command runs FastAPI. 
-# (For Celery, Render will override this command using the render.yaml config)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the startup script which launches both Celery and FastAPI
+CMD ["/app/start.sh"]

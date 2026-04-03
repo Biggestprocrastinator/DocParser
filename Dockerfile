@@ -15,21 +15,33 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory to /app
-WORKDIR /app
+# Set up a new user named "user" with user ID 1000
+# Hugging Face Spaces require running as a non-root user
+RUN useradd -m -u 1000 user
+
+# Set home to the user's home directory
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
+
+# Set working directory
+WORKDIR $HOME/app
 
 # Copy requirement file first to leverage Docker cache
-COPY src/requirements.txt /app/
+COPY src/requirements.txt $HOME/app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all application source code from src/ to /app/
-COPY src /app/
+# Copy all application source code
+COPY src $HOME/app/
 
-# Make the start script executable
-RUN chmod +x /app/start.sh
+# Make the start script executable and transfer ownership
+RUN chmod +x $HOME/app/start.sh && chown -R user:user $HOME/app
 
-# Expose the standard FastAPI port
-EXPOSE 8000
+# Switch to the non-root user
+USER user
+
+# Hugging Face Spaces exposes port 7860
+EXPOSE 7860
 
 # Run the startup script which launches both Celery and FastAPI
-CMD ["/app/start.sh"]
+CMD ["./start.sh"]
+

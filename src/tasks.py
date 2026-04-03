@@ -210,3 +210,5 @@ def analyze_document_task(file_path: str, file_type: str, file_name: str) -> dic
         # 4: Clean up temp file
         if os.path.exists(file_path):
             os.remove(file_path)
+   
+ 

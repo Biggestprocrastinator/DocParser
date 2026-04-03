@@ -14,6 +14,18 @@ load_dotenv()
 
 app = FastAPI(title="AI-Powered Document Analysis API")
 
+@app.get("/")
+async def root():
+    """
+    Root endpoint to provide API status and documentation link for judges.
+    """
+    return {
+        "message": "DocParser AI API is Online",
+        "docs": "/docs",
+        "version": "1.0.0",
+        "status": "Ready to process documents"
+    }
+
 # Setup Authentication
 API_KEY_NAME = "x-api-key"
 EXPECTED_API_KEY = os.getenv("API_KEY", "YOUR_SECRET_API_KEY")

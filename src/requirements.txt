@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+celery
+redis
+pytesseract
+pdf2image
+google-generativeai
+pydantic
+python-dotenv
+opencv-python
+numpy
+python-docx

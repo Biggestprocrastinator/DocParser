@@ -50,21 +50,21 @@ async def document_analyze(
         raise HTTPException(status_code=400, detail=f"Invalid base64 payload: {str(e)}")
 
     try:
-        # Step 2: Trigger the Celery Task Async
+        
         task = analyze_document_task.delay(
             file_path=temp_file_path,
             file_type=request.fileType,
             file_name=request.fileName
         )
         
-        # Step 3: Try to wait synchronously for 25 seconds
+        
         result = task.get(timeout=25)
         
-        # Error handling from Celery
+        
         if "error" in result:
              raise HTTPException(status_code=500, detail=result["error"])
              
-        # Step 4: Construct the explicit flat dictionary to guarantee completely clean output
+        
         return {
             "status": "success",
             "fileName": request.fileName,
@@ -74,8 +74,8 @@ async def document_analyze(
         }
 
     except CeleryTimeoutError:
-        # THE FIX: If it takes longer than 25s, don't crash!
-        # Return a 202 Accepted status and tell the client the Task ID so they can check later.
+        
+        # Return a 202 Accepted status and tell the client the Task ID
         return {
             "status": "processing",
             "message": "Document is very large and still processing in the background.",

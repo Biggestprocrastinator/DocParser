@@ -55,7 +55,7 @@ Create a `.env` file in the `src/` directory based on `.env.example`:
 GEMINI_API_KEY=your_gemini_key_here
 CELERY_BROKER_URL=your_redis_url_here
 CELERY_RESULT_BACKEND=your_redis_url_here
-API_KEY=sk_track2_987654321
+API_KEY=your_api_key_here
 ```
 
 ### 4. Run the Application
@@ -79,7 +79,7 @@ uvicorn main:app --reload
 `POST /api/document-analyze`
 
 **Request Headers:**
-* `x-api-key`: `sk_track2_987654321`
+* `x-api-key`: `your_api_key_here`
 
 **Request Body:**
 ```json

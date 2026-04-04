@@ -10,8 +10,8 @@
 ![Redis](https://img.shields.io/badge/Broker-Redis-dc382d?style=flat-square&logo=redis)
 
 <p align="center">
-  <!-- Provide a system architecture diagram or screenshot in the images folder and uncomment below -->
-  <!-- <img src="images/demo.png" alt="Demo Screenshot" width="80%"> -->
+
+   <img src="images/demo.png" alt="Demo Screenshot" width="80%">
 </p>
 
 ## What is DocParser

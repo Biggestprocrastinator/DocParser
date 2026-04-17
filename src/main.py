@@ -51,8 +51,12 @@ async def document_analyze(
     api_key: str = Security(verify_api_key)
 ):
     try:
-        # Step 1: Decode Base64 to a temporary file
-        temp_dir = tempfile.gettempdir()
+        # Step 1: Decode Base64 to a local temporary folder
+        # We use a local folder nested in the app as system /tmp can have restricted access on some Space runtimes
+        temp_dir = "./temp_docs"
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir, exist_ok=True)
+            
         temp_file_path = save_base64_to_tempfile(
             base64_string=request.fileBase64,
             temp_dir=temp_dir,

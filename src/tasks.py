@@ -127,26 +127,48 @@ def analyze_document_task(file_path: str, file_type: str, file_name: str) -> dic
             hints_text = "\n".join(hints) if hints else "No direct regex hints found."
 
             #2: Extract data using Gemini API with Multimodal Vision prompt
-            prompt = (
-                "You are an expert Document Auditor. I am providing you with two inputs:\n"
-                "1. A raw (and likely messy) OCR transcript from Tesseract.\n"
-                "2. The original image of the document.\n\n"
-                f"--- OCR Data & Regex Hints ---\n"
-                f"[HINTS]\n{hints_text}\n[/HINTS]\n"
-                f"Document Text:\n{cleaned_text[:5000]}\n"
-                f"------------------------------\n\n"
-                "Your Task: Use the image as the 'Source of Truth' to verify and correct the OCR text.\n"
-                "Handwriting: Read the handwritten text inside the form boxes (e.g., Name, Amount).\n"
-                "Noise Filtering: Explicitly ignore any numbers or text found in a 'status bar' at the very top of an image (e.g., time, battery, network speeds). "
-                "If the OCR text says '474' but you see it's a network icon in the image, discard it. If the image shows '7000' written next to 'Amount Paid', extract '7000'. "
-                "If a hint is just a zip code or irrelevant number, ignore it. If a hint is a handwritten name next to a 'Name:' label or an amount, verify it.\n\n"
-                "Return a clean, professional summary, sentiment, and the verified entities.\n"
-                "Output ONLY valid JSON. The JSON must have exact top-level keys: 'summary', 'entities', and 'sentiment'.\n"
-                "- 'summary': A concise brief of the text.\n"
-                "- 'entities': An object containing exactly these arrays: 'names', 'dates', 'organizations', 'amounts'. "
-                "Map verified hints and any other found data into these specific categories. If none are found, use an empty list [].\n"
-                "- 'sentiment': Must be exactly one of the words: 'Positive', 'Neutral', or 'Negative'."
-            )
+            prompt = f"""Act as a Senior Document Intelligence Specialist. You are analyzing a document using an Augmented Hybrid Pipeline (Vision + OCR).
+
+### 🔎 MISSION
+Your goal is to extract structured data with high recall for the HCL GUVI rubric. If the OCR text is messy or empty, perform a "Vision Audit" by looking at the provided image/PDF directly to find the information.
+
+### 📂 INPUT DATA:
+--- OCR Data & Regex Hints ---
+[HINTS]
+{hints_text}
+[/HINTS]
+Document Text:
+{cleaned_text[:5000]}
+------------------------------
+
+### 📋 EXTRACTION DIRECTIVES
+1. **Summary**: Write a 3-5 sentence professional summary. If the document contains technical diagrams (e.g., algorithms or sketches), describe the functional flow and key concepts depicted.
+2. **Sentiment**: [Positive, Negative, or Neutral].
+3. **Entities - Names**: Extract all human names. 
+   - *Logic*: Automatically normalize common OCR artifacts (e.g., resolve '1' as 'I', or '0' as 'o' in surnames) based on high-probability linguistic structures.
+4. **Entities - Organizations**: Extract all formal institutions, including companies, gyms, government agencies, and educational universities.
+5. **Entities - Dates**: Extract specific calendar dates, month/year pairings, and time durations (e.g., "6 months", "1-year").
+6. **Entities - Amounts**: 
+   - **INCLUDE**: All financial values (e.g., "7000"), academic metrics (e.g., "SGPA", "CGPA", "Grades"), and percentages.
+   - **EXCLUDE**: Strictly filter out metadata noise such as phone numbers, postal codes, and internal database UUIDs.
+
+### 🧩 HANDLING FAILURES
+- Never return "No text detected" if there is any visual content.
+- If a field is truly missing, return an empty list [].
+- Treat handwritten text with the same priority as printed text.
+
+### 📦 OUTPUT (Strict JSON)
+{{
+  "status": "success",
+  "summary": "...",
+  "entities": {{
+    "names": [],
+    "dates": [],
+    "organizations": [],
+    "amounts": []
+  }},
+  "sentiment": "..."
+}}"""
             
             # Load the PIL Image for Gemini Multimodal API
             try:

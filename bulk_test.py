@@ -5,12 +5,14 @@ import json
 
 # Configuration
 API_URL = "http://127.0.0.1:8000/api/document-analyze"
-API_KEY = "your_api_key_here"
+STATUS_URL_BASE = "http://127.0.0.1:8000/api/document-status"
+API_KEY = "sk_track2_987654321"
 SAMPLES_DIR = "./test_samples"
+SUMMARY_WORD_LIMIT = int(os.getenv("SUMMARY_WORD_LIMIT", "150"))
 
 def test_files():
     if not os.path.exists(SAMPLES_DIR):
-        print(f"❌ Error: Folder '{SAMPLES_DIR}' not found.")
+        print(f" Error: Folder '{SAMPLES_DIR}' not found.")
         return
 
     for filename in os.listdir(SAMPLES_DIR):
@@ -21,7 +23,7 @@ def test_files():
         if ext not in ['pdf', 'png', 'jpg', 'jpeg', 'docx']:
             continue
 
-        print(f"🔍 Testing: {filename}...")
+        print(f"Testing: {filename}...")
 
         with open(file_path, "rb") as f:
             encoded_string = base64.b64encode(f.read()).decode('utf-8')
@@ -29,7 +31,9 @@ def test_files():
         payload = {
             "fileName": filename,
             "fileType": ext,
-            "fileBase64": encoded_string
+            "fileBase64": encoded_string,
+            # Request a longer summary when the API supports it.
+            "summaryWordLimit": SUMMARY_WORD_LIMIT
         }
 
         try:
@@ -46,45 +50,45 @@ def test_files():
                 # Check if it was sent to the background queue
                 if data.get("status") == "processing":
                     task_id = data.get("task_id")
-                    print(f"⏳ Document large, timed out! Celery is processing in background.")
-                    print(f"🔄 Actively Polling Task ID: {task_id}...")
+                    print(f"Document large, timed out! Celery is processing in background.")
+                    print(f"Actively Polling Task ID: {task_id}...")
                     
                     import time
                     while True:
                         time.sleep(3) # Wait 3 seconds before pinging again
                         status_res = requests.get(
-                            f"http://127.0.0.1:8000/api/document-status/{task_id}",
+                            f"{STATUS_URL_BASE}/{task_id}",
                             headers={"x-api-key": API_KEY}
                         )
                         
                         if status_res.status_code == 200:
                             status_data = status_res.json()
                             if status_data.get("status") == "success":
-                                print(f"✅ Background Success | Summary: {status_data['summary'][:50]}...")
-                                print(f"📊 Entities: {json.dumps(status_data['entities'], indent=2)}")
+                                print("? Background Success | Full Response:")
+                                print(json.dumps(status_data, indent=2))
                                 break
                             elif status_data.get("status") == "processing":
                                 # Just print a dot to show we are still waiting
                                 print("   ...", end="", flush=True)
                             else:
-                                print(f"\n⚠️ Task Finished with Unknown Status: {status_data}")
+                                print(f"\nTask Finished with Unknown Status: {status_data}")
                                 break
                         else:
-                            print(f"\n❌ Status Endpoint Error | Code: {status_res.status_code}")
+                            print(f"\n Status Endpoint Error | Code: {status_res.status_code}")
                             break
                             
                 # Check if it returned fast enough to skip the queue
                 elif "summary" in data:
-                    print(f"✅ Fast Success | Summary: {data['summary'][:50]}...")
-                    print(f"📊 Entities: {json.dumps(data['entities'], indent=2)}")
+                    print("? Fast Success | Full Response:")
+                    print(json.dumps(data, indent=2))
                 else:
-                    print(f"⚠️ Unexpected Data Format: {data}")
+                    print(f" Unexpected Data Format: {data}")
 
             else:
-                print(f"❌ Failed | Status: {response.status_code} | {response.text}")
+                print(f"Failed | Status: {response.status_code} | {response.text}")
         
         except Exception as e:
-            print(f"💥 Error connecting to API: {e}")
+            print(f" Error connecting to API: {e}")
         
         print("-" * 50)
 
